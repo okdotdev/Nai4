@@ -13,8 +13,12 @@ public class KMeans {
         this.records = irisData;
         this.centroids = new ArrayList<>();
         this.maxIterations = maxIterations;
+        initializeCentroids(k);
+        run();
+    }
 
 
+    public void initializeCentroids(int k) {
         for (int i = 0; i < k; i++) {
 
             List<Double> coordinates = new ArrayList<>();
@@ -23,31 +27,19 @@ public class KMeans {
                 double coordinate = Math.random() * 10;
                 coordinate = Math.round(coordinate * 10.0) / 10.0;
                 coordinates.add(coordinate);
-                //System.out.println("coordinate: " + coordinate);
+
             }
             Record centroid = new Record("CENTROID", coordinates);
 
             centroids.add(centroid);
         }
-
-        System.out.println("Initial centroids: ");
-        if (centroids.size() > 5)
-            System.out.println("Too many centroids to print");
-        else {
-            for (Record centroid : centroids) {
-                System.out.println(centroid);
-            }
-        }
-
-        System.out.println(" ");
-
-        run();
     }
 
     public void run() {
 
         int iteration = 0;
         while (iteration < maxIterations) {
+            double totalSquaredDistance = 0.0;
             for (Record record : records) {
                 double minDistance = Double.MAX_VALUE;
                 Record closestCentroid = null;
@@ -61,40 +53,32 @@ public class KMeans {
                 }
 
                 record.setClosestCentroid(closestCentroid);
+                totalSquaredDistance += Math.pow(minDistance, 2);
             }
 
             for (Record centroid : centroids) {
-                List<Double> newCoordinates = calculateNewCoordinates(centroid);
+                List<Double> newCoordinates = calculateNewCoordinatesOfCentroid(centroid);
                 centroid.setCoordinates(newCoordinates);
             }
 
+            System.out.println("Iteracja " + iteration + ": sumę kwadratów odległości = " + totalSquaredDistance);
             iteration++;
         }
 
         predictTagOfCentroid();
         predictTagOfRecordFromClosestCentroid();
 
-        System.out.println("Final centroids: ");
-        if (centroids.size() > 5)
-            System.out.println("Too many centroids to print");
-        else
-            for (Record centroid : centroids) {
-                System.out.println(centroid);
-            }
-
-        System.out.println("Predictions:");
-        for (Record record : records) {
-            System.out.println(record);
-        }
 
         System.out.println(" ");
         System.out.println("Correct predictions: " + correctPredictions());
         System.out.println("Total predictions: " + records.size());
         System.out.println("Accuracy: " + (double) correctPredictions() / records.size() * 100 + "%");
+        System.out.println("Entropy: " + calculateEntropy(records));
+
 
     }
 
-    private List<Double> calculateNewCoordinates(Record centroid) {
+    private List<Double> calculateNewCoordinatesOfCentroid(Record centroid) {
         List<Double> newCoordinates = new ArrayList<>();
         for (int i = 0; i < Record.getNumber_of_attributes(); i++) {
             double sum = 0;
@@ -158,4 +142,24 @@ public class KMeans {
         }
         return correctPredictions;
     }
+
+    private double calculateEntropy(List<Record> data) {
+        int totalRecords = data.size();
+        Map<String, Integer> classCounts = new HashMap<>();
+
+        for (Record record : data) {
+            String classificationTag = record.getClassificationTag();
+            classCounts.put(classificationTag, classCounts.getOrDefault(classificationTag, 0) + 1);
+        }
+
+        double entropy = 0.0;
+        for (int count : classCounts.values()) {
+            double probability = (double) count / totalRecords;
+            entropy -= probability * (Math.log(probability) / Math.log(2));
+        }
+
+        return entropy;
+    }
+
+
 }
