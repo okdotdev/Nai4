@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataReader {
-    public static List<Iris> readIrisDataFromFile(String filename) throws IOException {
+    public static List<Record> readRecordsFromFile(String filename) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filename));
-        List<Iris> data = new ArrayList<>();
+        List<Record> data = new ArrayList<>();
 
         String line;
         while ((line = reader.readLine()) != null) {
@@ -18,14 +18,16 @@ public class DataReader {
                 values.add(Double.parseDouble(parts[i]));
             }
 
-            if (Iris.getNumber_of_attributes() == 0)
-                Iris.setNumber_of_attributes(values.size());
+            if (Record.getNumber_of_attributes() == 0)
+                Record.setNumber_of_attributes(values.size());
 
-            data.add(new Iris(tag, values));
+            data.add(new Record(tag, values));
         }
 
         return data;
     }
+
+
 }
 
 

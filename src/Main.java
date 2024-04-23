@@ -10,10 +10,13 @@ public class Main {
         System.out.print("Enter the k value: ");
         int k = scanner.nextInt();
 
+        System.out.println("Enter Max iterations:");
+        int maxIterations = scanner.nextInt();
 
-        List<Iris> irises = DataReader.readIrisDataFromFile(filename);
 
-        KMeans kmeans = new KMeans(irises, k);
+        List<Record> irises = DataReader.readRecordsFromFile(filename);
+
+         new KMeans(irises, k, maxIterations);
 
 
     }
