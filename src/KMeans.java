@@ -54,6 +54,7 @@ public class KMeans {
 
                 record.setClosestCentroid(closestCentroid);
                 totalSquaredDistance += Math.pow(minDistance, 2);
+
             }
 
             for (Record centroid : centroids) {
@@ -70,13 +71,32 @@ public class KMeans {
 
 
         System.out.println(" ");
+        System.out.println("Clusters: ");
+
+        Map<Record, List<Record>> clusters = new HashMap<>();
+        for (Record centroid : centroids) {
+            clusters.put(centroid, new ArrayList<>());
+        }
+
+        for (Record record : records) {
+            clusters.get(record.getClosestCentroid()).add(record);
+        }
+
+        for (Map.Entry<Record, List<Record>> entry : clusters.entrySet()) {
+            Record centroid = entry.getKey();
+            List<Record> cluster = entry.getValue();
+            double entropy = calculateEntropyForGroup(cluster);
+            System.out.println("Centroid: " + centroid.getCoordinates() + " Entropy: " + entropy);
+        }
+
+        System.out.println(" ");
         System.out.println("Correct predictions: " + correctPredictions());
         System.out.println("Total predictions: " + records.size());
         System.out.println("Accuracy: " + (double) correctPredictions() / records.size() * 100 + "%");
-        System.out.println("Entropy: " + calculateEntropy(records));
 
 
     }
+
 
     private List<Double> calculateNewCoordinatesOfCentroid(Record centroid) {
         List<Double> newCoordinates = new ArrayList<>();
@@ -143,22 +163,21 @@ public class KMeans {
         return correctPredictions;
     }
 
-    private double calculateEntropy(List<Record> data) {
-        int totalRecords = data.size();
-        Map<String, Integer> classCounts = new HashMap<>();
-
-        for (Record record : data) {
-            String classificationTag = record.getClassificationTag();
-            classCounts.put(classificationTag, classCounts.getOrDefault(classificationTag, 0) + 1);
+    private double calculateEntropyForGroup(List<Record> group) {
+        Map<String, Integer> tagCounts = new HashMap<>();
+        for (Record record : group) {
+            String tag = record.getClassificationTag();
+            tagCounts.put(tag, tagCounts.getOrDefault(tag, 0) + 1);
         }
 
         double entropy = 0.0;
-        for (int count : classCounts.values()) {
-            double probability = (double) count / totalRecords;
-            entropy -= probability * (Math.log(probability) / Math.log(2));
+        for (Map.Entry<String, Integer> entry : tagCounts.entrySet()) {
+            double probability = (double) entry.getValue() / group.size();
+            entropy -= probability * Math.log(probability) / Math.log(2);
         }
 
         return entropy;
+
     }
 
 
