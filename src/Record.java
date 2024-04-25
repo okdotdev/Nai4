@@ -49,15 +49,7 @@ public class Record {
 
     @Override
     public String toString() {
-        if (Objects.equals(classificationTag, "CENTROID")) {
-            return "Centroid{" +
-                    "coordinates=" + coordinates +
-                    '}';
-        } else {
-            return  classificationTag + " " + coordinates;
-        }
-
-
+        return classificationTag + " " + coordinates;
     }
 
 

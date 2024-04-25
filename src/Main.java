@@ -14,7 +14,8 @@ public class Main {
 
         List<Record> irises = DataReader.readRecordsFromFile(filename);
 
-         new KMeans(irises, k);
+        KMeans kMeans =  new KMeans(irises, k);
+        kMeans.group();
 
 
     }

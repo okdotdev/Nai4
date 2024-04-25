@@ -12,33 +12,57 @@ public class KMeans {
         this.records = records;
         this.centroids = new ArrayList<>();
         initializeCentroids(k);
-        run();
     }
 
 
     public void initializeCentroids(int k) {
         for (int i = 0; i < k; i++) {
 
-            List<Double> coordinates = new ArrayList<>();
-
+            /*
             for (int j = 0; j < Record.getNumber_of_attributes(); j++) {
-                double coordinate = Math.random() * 10;
+
+
+                double max = Double.MIN_VALUE;
+                for (Record record : records) {
+                    if (record.getCoordinates().get(j) > max) {
+                        max = record.getCoordinates().get(j);
+                    }
+                }
+
+                double min = Double.MAX_VALUE;
+                for (Record record : records) {
+                    if (record.getCoordinates().get(j) < min) {
+                        min = record.getCoordinates().get(j);
+                    }
+                }
+
+
+                double coordinate = Math.random() * (max - min) + min;
                 coordinate = Math.round(coordinate * 10.0) / 10.0;
                 coordinates.add(coordinate);
 
             }
+
+             */
+
+            //random coordinates of existing records
+            int randomIndex = (int) (Math.random() * records.size());
+            Record randomRecord = records.get(randomIndex);
+            List<Double> coordinates = new ArrayList<>(randomRecord.getCoordinates());
+
             Record centroid = new Record("CENTROID", coordinates);
 
             centroids.add(centroid);
         }
     }
 
-    public void run() {
+    public void group() {
 
         double previousTotalSquaredDistance = Double.MAX_VALUE;
         int iteration = 0;
 
         while (true) {
+            //znajdź najbliższe centroidy dla każdego rekordu
             double totalSquaredDistance = 0.0;
             for (Record record : records) {
                 double minDistance = Double.MAX_VALUE;
@@ -50,13 +74,14 @@ public class KMeans {
                         minDistance = distance;
                         closestCentroid = centroid;
                     }
-                }
 
+                }
                 record.setClosestCentroid(closestCentroid);
                 totalSquaredDistance += Math.pow(minDistance, 2);
 
             }
 
+            //oblicz nowe współrzędne centroid
             for (Record centroid : centroids) {
                 List<Double> newCoordinates = calculateNewCoordinatesOfCentroid(centroid);
                 centroid.setCoordinates(newCoordinates);
@@ -96,9 +121,11 @@ public class KMeans {
 
             double entropy = 0.0;
             int clusterSize = cluster.size();
+
             for (Map.Entry<String, Integer> speciesEntry : speciesCount.entrySet()) {
                 double probability = (double) speciesEntry.getValue() / clusterSize;
                 entropy -= probability * Math.log(probability) / Math.log(2);
+
             }
             System.out.println("--------------------");
             System.out.println("Centroid: " + centroid.getCoordinates());
@@ -112,6 +139,7 @@ public class KMeans {
 
 
     }
+
     private List<Double> calculateNewCoordinatesOfCentroid(Record centroid) {
         List<Double> newCoordinates = new ArrayList<>();
         for (int i = 0; i < Record.getNumber_of_attributes(); i++) {
