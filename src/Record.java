@@ -3,7 +3,7 @@ import java.util.Objects;
 
 public class Record {
     private final String classificationTag;
-    private String prediction;
+
     private Record closestCentroid;
     private final List<Double> coordinates;
     private static int number_of_attributes = 0;
@@ -20,14 +20,6 @@ public class Record {
 
     public String getClassificationTag() {
         return classificationTag;
-    }
-
-    public String getPrediction() {
-        return prediction;
-    }
-
-    public void setPrediction(String prediction) {
-        this.prediction = prediction;
     }
 
     public Record getClosestCentroid() {
@@ -60,13 +52,9 @@ public class Record {
         if (Objects.equals(classificationTag, "CENTROID")) {
             return "Centroid{" +
                     "coordinates=" + coordinates +
-                    ",centroidTag=" + closestCentroid.getPrediction() +
                     '}';
         } else {
-            return "Record{" +
-                    "classificationTag='" + classificationTag + '\'' +
-                    ",centroidTag=" + closestCentroid.getPrediction() +
-                    '}';
+            return  classificationTag + " " + coordinates;
         }
 
 
