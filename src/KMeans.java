@@ -44,8 +44,7 @@ public class KMeans {
             }
 
              */
-
-            //random coordinates of existing records
+            
             int randomIndex = (int) (Math.random() * records.size());
             Record randomRecord = records.get(randomIndex);
             List<Double> coordinates = new ArrayList<>(randomRecord.getCoordinates());

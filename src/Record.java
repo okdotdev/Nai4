@@ -1,7 +1,7 @@
 import java.util.List;
 import java.util.Objects;
 
-public class Record {
+public class Record implements IVector {
     private final String classificationTag;
 
     private Record closestCentroid;
@@ -26,6 +26,7 @@ public class Record {
         return closestCentroid;
     }
 
+    @Override
     public List<Double> getCoordinates() {
         return coordinates;
     }
